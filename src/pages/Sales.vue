@@ -39,9 +39,15 @@
       <div class="card mt-3">
         <div class="card-body">
           <div class="row">
-            <p class="m-1"><b>Subtotal:</b> {{ selectedSale.subtotal }}</p>
-            <p class="m-1"><b>Tax:</b> {{ selectedSale.total_tax }}</p>
-            <p class="m-1"><b>Total:</b> {{ selectedSale.total }}</p>
+            <p class="m-1">
+              <b>Subtotal:</b> {{ formatValue(selectedSale.subtotal) }}
+            </p>
+            <p class="m-1">
+              <b>Tax:</b> {{ formatValue(selectedSale.total_tax) }}
+            </p>
+            <p class="m-1">
+              <b>Total:</b> {{ formatValue(selectedSale.total) }}
+            </p>
           </div>
         </div>
       </div>
@@ -79,58 +85,46 @@ export default {
       await this.$http.get("/users/me").then((response) => {
         this.user = response.data;
       });
-      await this.$http.get("/sales/user/" + this.user.id).then((response) => {
-        this.selectedSale = response.data[0];
-        this.selectedSale.subtotal =
-          Number(this.selectedSale.total) - Number(this.selectedSale.total_tax);
-        this.selectedSale.products = this.selectedSale.products.map(
-          (product) => {
-            product.total = product.total.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            });
-            product.unit_price = product.unit_price.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            });
-
-            product.tax = product.tax.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
-            });
-            return product;
-          }
-        );
-      });
+      await this.getCart();
       this.is_loading = false;
     };
     init();
   },
   methods: {
+    async getCart() {
+      await this.$http.get("/sales/user/" + this.user.id).then((response) => {
+        this.selectedSale = response.data[0];
+        this.selectedSale.total = Number(this.selectedSale.total);
+        this.selectedSale.total_tax = Number(this.selectedSale.total_tax);
+        this.selectedSale.subtotal =
+          this.selectedSale.total - this.selectedSale.total_tax;
+        this.selectedSale.products = this.selectedSale.products.map(
+          (product) => {
+            product.total = this.formatValue(Number(product.total));
+            product.unit_price = this.formatValue(Number(product.unit_price));
+            product.tax = Number(product.tax);
+            return product;
+          }
+        );
+      });
+    },
+    formatValue(value = 0) {
+      return value.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
+    },
     async decreaseQuantity(product) {
       this.is_loading = true;
       const payload = {
         sale_item_id: product.sale_item_id,
         quantity: product.quantity - 1,
       };
-      let sale_id;
       await this.$http.put("/sales/items", payload).then((response) => {
         sale_id = response.data.id;
       });
       product.quantity -= 1;
-      await this.$http.get("/sales/" + sale_id).then((response) => {
-        const selectedSale = response.data;
-        selectedSale.subtotal =
-          Number(selectedSale.total) - Number(selectedSale.total_tax);
-        const formattedPrice = selectedSale.subtotal.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        });
-        selectedSale.subtotal = formattedPrice;
-
-        this.selectedSale = selectedSale;
-        this.$forceUpdate();
-      });
+      await this.getCart();
       this.is_loading = false;
     },
     async increaseQuantity(product) {
@@ -139,24 +133,13 @@ export default {
         sale_item_id: product.sale_item_id,
         quantity: product.quantity + 1,
       };
-      let sale_id;
+
       await this.$http.put("/sales/items", payload).then((response) => {
         sale_id = response.data.id;
       });
 
       product.quantity += 1;
-      await this.$http.get("/sales/" + sale_id).then((response) => {
-        const selectedSale = response.data;
-        selectedSale.subtotal =
-          Number(selectedSale.total) - Number(selectedSale.total_tax);
-        const formattedPrice = selectedSale.subtotal.toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        });
-        selectedSale.subtotal = formattedPrice;
-        this.selectedSale = selectedSale;
-        this.$forceUpdate();
-      });
+      await this.getCart();
       this.is_loading = false;
     },
   },

@@ -214,7 +214,7 @@ export default {
           icon: "success",
           title: "Product successfully added",
           showConfirmButton: false,
-          timer: 750,
+          timer: 1500,
         });
 
         await this.$http.get("/products").then((response) => {
@@ -233,7 +233,7 @@ export default {
           icon: "error",
           title: "Quantity must be greater than 0",
           showConfirmButton: false,
-          timer: 750,
+          timer: 1500,
         });
         return;
       }

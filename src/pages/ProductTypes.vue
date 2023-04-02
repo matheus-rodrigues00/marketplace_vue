@@ -51,6 +51,7 @@
                     :class="{
                       'p-invalid': submitted && !newProductType.tax_rate,
                     }"
+                    :max="100"
                   />
                   <small
                     v-if="submitted && !newProductType.tax_rate"
@@ -89,10 +90,11 @@
         :value="product_types"
         :rows="10"
         paginator
-        paginatorTemplate="  PrevPageLink  NextPageLink "
+        paginatorTemplate="PrevPageLink  NextPageLink"
+        sortField="name"
       >
-        <Column field="name" header="Name"></Column>
-        <Column field="tax_rate" header="Tax Rate (%)"></Column>
+        <Column field="name" header="Name" sortable></Column>
+        <Column field="tax_rate" header="Tax Rate (%)" sortable></Column>
       </DataTable>
     </div>
   </div>
@@ -141,13 +143,17 @@ export default {
     };
   },
   methods: {
-    saveProductType() {
+    async getProductTypes() {
+      await this.$http.get("/product-types").then((response) => {
+        this.product_types = response.data;
+      });
+    },
+    async saveProductType() {
       this.submitted = true;
       if (this.newProductType.name && this.newProductType.tax_rate) {
-        this.$http
+        await this.$http
           .post("/product-types", this.newProductType)
           .then((response) => {
-            this.product_types.push(response.data);
             this.showNewProductTypeDialog = false;
             this.newProductType = {
               name: "",
@@ -158,6 +164,8 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+
+        await this.getProductTypes();
       }
     },
   },
