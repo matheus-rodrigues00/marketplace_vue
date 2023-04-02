@@ -36,7 +36,7 @@ export default {
           to: "/product-types",
         },
         {
-          label: "Sales",
+          label: "Cart",
           icon: "pi pi-fw pi-shopping-cart",
           to: "/sales",
         },

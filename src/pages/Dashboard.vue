@@ -1,4 +1,5 @@
 <template>
+  <Loading v-if="is_loading" />
   <div class="row p-3">
     <div class="col-md-8">
       <div class="card">
@@ -48,6 +49,7 @@ export default {
   },
   data() {
     return {
+      is_loading: false,
       user: {},
       products: [],
       product_types: [],
@@ -62,14 +64,15 @@ export default {
   },
   mounted() {
     const init = async () => {
-      this.$http.get("/users/me").then((response) => {
+      this.is_loading = true;
+      await this.$http.get("/users/me").then((response) => {
         this.user = response.data;
         console.log(this.user);
       });
       await this.$http.get("/product-types").then((response) => {
         this.product_types = response.data;
       });
-      this.$http.get("/products").then((response) => {
+      await this.$http.get("/products").then((response) => {
         this.products = response.data.map((product) => {
           const product_type = this.product_types.find(
             (product_type) => product_type.id === product.product_type_id
@@ -88,6 +91,7 @@ export default {
           };
         });
       });
+      this.is_loading = false;
     };
     init();
   },
