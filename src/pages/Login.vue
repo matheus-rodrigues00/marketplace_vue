@@ -68,11 +68,17 @@ export default {
             icon: "success",
             confirmButtonText: "OK",
           }).then(() => {
-            this.$router.push("/");
+            window.location.href = "/";
           });
         })
         .catch((error) => {
           console.error(error);
+          Swal.fire({
+            title: "Error",
+            text: "Invalid email or password",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
         });
     },
   },
