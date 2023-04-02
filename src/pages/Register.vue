@@ -72,7 +72,6 @@ export default {
         password: this.password,
       };
       this.$http.post("/users/register", payload).then((response) => {
-        console.log(response);
         Swal.fire({
           title: "Success!",
           text: "You have successfully registered!",
