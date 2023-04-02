@@ -15,8 +15,10 @@ export default {
     RouterLink,
     RouterView,
   },
+  mounted() {},
   data() {
     return {
+      user: {},
       menuItems: [
         {
           label: "Dashboard",
@@ -37,6 +39,16 @@ export default {
           label: "Sales",
           icon: "pi pi-fw pi-shopping-cart",
           to: "/sales",
+        },
+        {
+          label: "Login",
+          icon: "pi pi-fw pi-sign-in",
+          to: "/login",
+        },
+        {
+          label: "Register",
+          icon: "pi pi-fw pi-user-plus",
+          to: "/register",
         },
       ],
     };

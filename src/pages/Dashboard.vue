@@ -48,6 +48,7 @@ export default {
   },
   data() {
     return {
+      user: {},
       products: [],
       product_types: [],
       newProduct: {
@@ -61,6 +62,10 @@ export default {
   },
   mounted() {
     const init = async () => {
+      this.$http.get("/users/me").then((response) => {
+        this.user = response.data;
+        console.log(this.user);
+      });
       await this.$http.get("/product-types").then((response) => {
         this.product_types = response.data;
       });
