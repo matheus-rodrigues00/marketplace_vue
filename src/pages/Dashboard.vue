@@ -6,7 +6,7 @@
         <DataTable :value="products" :paginator="true" :rows="10">
           <Column field="name" header="Name"></Column>
           <Column field="price" header="Price"></Column>
-          <Column field="product_type_name" header="Product Type"></Column>
+          <Column field="product_type_name" header="Type"></Column>
         </DataTable>
       </div>
     </div>
@@ -72,7 +72,6 @@ export default {
           const tax = product.price * (product_type.tax_rate / 100);
           product.price = Number(product.price) + tax;
 
-          // format
           const formattedPrice = product.price.toLocaleString("en-US", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
