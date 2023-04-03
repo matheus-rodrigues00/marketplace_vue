@@ -82,10 +82,15 @@ export default {
   mounted() {
     const init = async () => {
       this.is_loading = true;
-      await this.$http.get("/users/me").then((response) => {
-        this.user = response.data;
-      });
-      await this.getCart();
+      try {
+        await this.$http.get("/users/me").then((response) => {
+          this.user = response.data;
+        });
+        await this.getCart();
+      } catch (error) {
+        console.log(error);
+      }
+
       this.is_loading = false;
     };
     init();

@@ -172,32 +172,37 @@ export default {
   mounted() {
     const init = async () => {
       this.is_loading = true;
-      await this.$http.get("/users/me").then((response) => {
-        this.user = response.data;
-        console.log(this.user);
-      });
-      await this.$http.get("/product-types").then((response) => {
-        this.product_types = response.data;
-      });
-      await this.$http.get("/products").then((response) => {
-        this.products = response.data.map((product) => {
-          const product_type = this.product_types.find(
-            (product_type) => product_type.id === product.product_type_id
-          );
-          const tax = product.price * (product_type.tax_rate / 100);
-          product.price = Number(product.price) + tax;
-
-          const formattedPrice = product.price.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
-          product.price = formattedPrice;
-          return {
-            ...product,
-            product_type_name: product_type.name,
-          };
+      try {
+        await this.$http.get("/users/me").then((response) => {
+          this.user = response.data;
+          console.log(this.user);
         });
-      });
+        await this.$http.get("/product-types").then((response) => {
+          this.product_types = response.data;
+        });
+        await this.$http.get("/products").then((response) => {
+          this.products = response.data.map((product) => {
+            const product_type = this.product_types.find(
+              (product_type) => product_type.id === product.product_type_id
+            );
+            const tax = product.price * (product_type.tax_rate / 100);
+            product.price = Number(product.price) + tax;
+
+            const formattedPrice = product.price.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            product.price = formattedPrice;
+            return {
+              ...product,
+              product_type_name: product_type.name,
+            };
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
       this.is_loading = false;
     };
     init();
