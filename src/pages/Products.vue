@@ -51,6 +51,8 @@
                       }"
                       inputId="withoutgrouping"
                       :useGrouping="false"
+                      :minFractionDigits="2"
+                      :maxFractionDigits="5"
                     />
                     <small v-if="submitted && !newProduct.price" class="p-error"
                       >Price is required.</small
