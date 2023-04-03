@@ -120,9 +120,7 @@ export default {
         sale_item_id: product.sale_item_id,
         quantity: product.quantity - 1,
       };
-      await this.$http.put("/sales/items", payload).then((response) => {
-        sale_id = response.data.id;
-      });
+      await this.$http.put("/sales/items", payload);
       product.quantity -= 1;
       await this.getCart();
       this.is_loading = false;
@@ -134,9 +132,7 @@ export default {
         quantity: product.quantity + 1,
       };
 
-      await this.$http.put("/sales/items", payload).then((response) => {
-        sale_id = response.data.id;
-      });
+      await this.$http.put("/sales/items", payload);
 
       product.quantity += 1;
       await this.getCart();
